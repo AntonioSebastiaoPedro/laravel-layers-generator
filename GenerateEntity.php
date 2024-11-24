@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class GenerateEntity extends Command
 {
-    protected $signature = 'generate:entity {name}';
+    protected $signature = 'generate:layers {name}';
     protected $description = 'Generate Model, Controller, Repository, DTOs, and Resource for a given entity';
 
     public function handle()
