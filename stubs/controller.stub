@@ -1,0 +1,69 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Repositories\{{class}}Repository;
+use App\DTOs\{{class}}\{Create{{class}}DTO, Edit{{class}}DTO};
+use App\Http\Requests\{{class}}\{Store{{class}}Request, Update{{class}}Request};
+use Illuminate\Http\Request;
+
+class {{class}}Controller extends Controller
+{
+    protected $service;
+
+    public function __construct(private {{class}}Repository ${{class}}Repository){}
+
+    public function index(Request $request)
+    {
+        ${{class}}s = $this->{{class}}Repository->getPaginate(
+            totalPerPage: $request->total_per_page ?? 15,
+            page: $request->page ?? 1,
+            filter: $request->filter ?? ''
+        );
+
+        return view('{{class}}s.index', ['{{class}}s' => ${{class}}s]);
+    }
+
+    public function create()
+    {
+        return view('admin.{{class}}.create');
+    }
+
+    public function store(Store{{class}}Request $request)
+    {
+        $this->{{class}}Repository->createNew(new Create{{class}}DTO(...$request->validated()));
+        return redirect()->route('{{class}}s.index')->with('success', '{{class}} criado com sucesso.');
+    }
+
+    public function show(string $id)
+    {
+        ${{class}} = $this->{{class}}Repository->findById($id);
+        if (!${{class}}) {
+            return redirect()->route('{{class}}s.index')->withErrors(['error' => '{{class}} não encontrado.']);
+        }
+
+        return view('{{class}}s.show', ['{{class}}' => ${{class}}]);
+    }
+
+    public function update(Update{{class}}Request $request, string $id)
+    {
+        $updated = $this->{{class}}Repository->update(
+            new Edit{{class}}DTO(...[$id, ...$request->validated()])
+        );
+
+        if (!$updated) {
+            return redirect()->route('{{class}}s.index')->withErrors(['error' => '{{class}} não encontrado.']);
+        }
+
+        return redirect()->route('{{class}}s.index')->with('success', '{{class}} atualizado com sucesso.');
+    }
+
+    public function destroy(string $id)
+    {
+        if (!$this->{{class}}Repository->delete($id)) {
+            return redirect()->route('{{class}}s.index')->withErrors(['error' => '{{class}} não encontrado.']);
+        }
+
+        return redirect()->route('{{class}}s.index')->with('success', '{{class}} excluído com sucesso.');
+    }
+}

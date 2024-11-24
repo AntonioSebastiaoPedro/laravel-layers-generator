@@ -1,0 +1,59 @@
+<?php
+namespace App\Repositories;
+
+use App\DTOs\{{class}}\Create{{class}}DTO;
+use App\DTOs\{{class}}\Edit{{class}}DTO;
+use App\Models\{{class}};
+use Illuminate\Pagination\LengthAwarePaginator;
+
+class {{class}}Repository
+{
+    public function __construct(protected {{class}} ${{class}}){}
+
+    public function getPaginate(int $totalPerPage = 15, int $page = 1, string $filter = ''): LengthAwarePaginator
+    {
+        return $this->{{class}}->where(function ($query) use ($filter){
+            if($filter !== ''){
+                $query->where('data', 'LIKE', "%{$filter}%");
+            }
+        })->paginate($totalPerPage, ['*'], $page);
+    }
+
+    public function createNew(Create{{class}}DTO ${{class}}Dto): {{class}}
+    {
+        $data = (array) ${{class}}Dto;
+
+        return $this->{{class}}->create($data);
+    }
+
+    public function findById(string $id): ?{{class}}
+    {
+        return $this->{{class}}->find($id);
+    }
+
+    public function findByData(string $data): ?{{class}}
+    {
+        return $this->{{class}}->where('data', $data)->first();
+    }
+
+    public function update(Edit{{class}}DTO ${{class}}DTO): bool
+    {
+        if(!${{class}} = $this->findById(${{class}}DTO->id)){
+            return false;
+        }
+        $data = (array) ${{class}}DTO;
+        unset($data['data']);
+        if(${{class}}DTO->data !== null){
+            $data['data'] = ${{class}}DTO->data;
+        }
+        return ${{class}}->update($data);
+    }
+
+    public function delete(string $id): bool
+    {
+        if(!${{class}} = $this->findById($id)){
+            return false;
+        }
+        return ${{class}}->delete();
+    }
+}

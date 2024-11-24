@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Http\Requests\{{class}};
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class {{type}}{{class}}Request extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'data' => [
+                'required',
+                'min:5',
+                'max:255',
+            ],
+        ];
+    }
+}
